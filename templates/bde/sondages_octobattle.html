@@ -16,7 +16,7 @@
 		{
 			margin: auto;
 		}*/
-		.logo_sondage
+		.logo_sondage, .conteneur_logo
 		{
 			height: 100px;
 			width: 100px;
@@ -26,11 +26,11 @@
 			display: flex;
 			justify-content: space-around;
 		}
-		.reponse_octobattle form
+		.reponse_octobattle .exform
 		{
 			margin: auto;
 		}
-		.reponse_octobattle form button
+		.reponse_octobattle .exform button
 		{
 			margin: 35px 0px 35px 0px;
 		}
@@ -67,21 +67,37 @@
 				// 109: M, réponse 2 cosmi
 				console.log(keycode);
 				if(keycode == 97){
-					$('#votant_reponse_1').val("minsanity");
-					$('#form_reponse_1').submit();
+					$('#reponse_minsanity').val("1");
+					$('#minsanity_2').html('');
+					$('#minsanity_1').html('<img src="{% static "logo_minsanity.png" %}" class="logo_sondage"/>');
 				}
 				else if(keycode == 113){
-					$('#votant_reponse_2').val("minsanity");
-					$('#form_reponse_2').submit();
+					$('#reponse_minsanity').val("2");
+					$('#minsanity_1').html('');
+					$('#minsanity_2').html('<img src="{% static "logo_minsanity.png" %}" class="logo_sondage"/>');
 				}
 				else if(keycode == 112){
-					$('#votant_reponse_1').val("cosminautes");
-					$('#form_reponse_1').submit();
+					$('#reponse_cosminautes').val("1");
+					$('#cosminautes_2').html('');
+					$('#cosminautes_1').html('<img src="{% static "logo_cosminautes.png" %}" class="logo_sondage"/>');
 				}
 				else if(keycode == 109){
-					$('#votant_reponse_2').val("cosminautes");
-					$('#form_reponse_2').submit();
+					$('#reponse_cosminautes').val("2");
+					$('#cosminautes_1').html('');
+					$('#cosminautes_2').html('<img src="{% static "logo_cosminautes.png" %}" class="logo_sondage"/>');
 				}
+			});
+
+			//Gère le clic sur le bouton valider
+			$('#form_sondage_octobattle').submit(function(event){
+				var form = this;
+				event.preventDefault();
+				$('#octobattle_reponse_{{ sondage_octobattle.sondage.resultat }}').css('background-image', 'none');
+				$('#octobattle_reponse_{{ sondage_octobattle.sondage.resultat }}').css('background-color', 'green');
+				//$('#form_sondage_octobattle').delay(10000).submit();
+				setTimeout(function(){
+					form.submit();
+				}, 3000);
 			});
 
 			// Colore les messages de victoire
@@ -139,30 +155,29 @@
 			{% if sondage_octobattle %}
 				<p id="sondage_octobattle_question">{{ sondage_octobattle.sondage.question }}</p>
 
-				<div id="reponse_1" class="reponse_octobattle">
-					<img src="{% static 'logo_minsanity.png' %}" class='logo_sondage' {% if sondage_octobattle.reponse_minsanity != 1 %}style="display:none"{% endif %}/>
-					<form method="post" action='/associations/bde/voter_sondages_octobattle/' class="voteform" id="form_reponse_1">
-						{% csrf_token %}
-						<input type="hidden" name="id_sondage_octobattle" value="{{ sondage_octobattle.id }}" />
-						<input type="hidden" name="votant" id="votant_reponse_1" value="nitro" />
-						<input type="hidden" name="choix" value="1" />
-						<input type="hidden" name="next" value="{{ request.path }}" />
-						<button class="btn" type="submit" id="octobattle_reponse_1">{{ sondage_octobattle.sondage.reponse1 }}</button>
-					</form>
-					<img src="{% static 'logo_cosminautes.png' %}" class='logo_sondage' {% if sondage_octobattle.reponse_cosminautes != 1 %}style="display:none"{% endif %}/>
-				</div>
-				<div id="reponse_2" class="reponse_octobattle"/>
-					<img src="{% static 'logo_minsanity.png' %}" class='logo_sondage' {% if sondage_octobattle.reponse_minsanity != 2 %}style="display:none"{% endif %}/>
-					<form method="post" action='/associations/bde/voter_sondages_octobattle/' class="voteform" id="form_reponse_2">
-						{% csrf_token %}
-						<input type="hidden" name="id_sondage_octobattle" value="{{ sondage_octobattle.id }}" />
-						<input type="hidden" name="votant" id="votant_reponse_2" value="nitro" />
-						<input type="hidden" name="choix" value="2" />
-						<input type="hidden" name="next" value="{{ request.path }}" />
-						<button class="btn" type="submit" id="octobattle_reponse_2">{{ sondage_octobattle.sondage.reponse2 }}</button>
-					</form>
-					<img src="{% static 'logo_cosminautes.png' %}" class='logo_sondage' {% if sondage_octobattle.reponse_cosminautes != 2 %}style="display:none"{% endif %}/>
-				</div>
+				<form method="post" action='/associations/bde/voter_sondages_octobattle/' class="voteform" id="form_sondage_octobattle">
+					{% csrf_token %}
+					<input type="hidden" name="id_sondage_octobattle" value="{{ sondage_octobattle.id }}" />
+					<input type="hidden" name="next" value="{{ request.path }}" />
+					<input type="hidden" name="reponse_minsanity" value="0" id="reponse_minsanity"/>
+					<input type="hidden" name="reponse_cosminautes" value="0" id="reponse_cosminautes"/>
+					<div id="reponse_1" class="reponse_octobattle">
+						<div id="minsanity_1" class="conteneur_logo"></div>
+						<div class="exform">
+							<button class="btn" type="button" id="octobattle_reponse_1">{{ sondage_octobattle.sondage.reponse1 }}</button>
+						</div>
+						<div id="cosminautes_1" class="conteneur_logo"></div>
+					</div>
+					<div id="reponse_2" class="reponse_octobattle"/>
+						<div id="minsanity_2" class="conteneur_logo"></div>
+						<div class="exform">
+							<button class="btn" type="button" id="octobattle_reponse_2">{{ sondage_octobattle.sondage.reponse2 }}</button>
+						</div>
+						<div id="cosminautes_2" class="conteneur_logo"></div>
+					</div>
+					<div class="conteneur_logo"></div>
+					<button class="btn" type="submit" id="valider_form_sondage_octobattle">Valider</button>
+				</form>
 			{% else %}
 				<div id="resultat_sondages_octobattle">
 					{% if points_minsanity < points_cosminautes %}

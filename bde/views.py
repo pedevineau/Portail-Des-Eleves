@@ -210,10 +210,7 @@ def sondages_octobattle(request):
 @login_required
 def voter_sondages_octobattle(request):
     sondage_octobattle = SondageOctoBattle.objects.filter(id=int(request.POST['id_sondage_octobattle'])).first()
-    if request.POST['votant'] == 'minsanity':
-        sondage_octobattle.reponse_minsanity = request.POST['choix']
-        sondage_octobattle.save()
-    elif request.POST['votant'] == 'cosminautes':
-        sondage_octobattle.reponse_cosminautes = request.POST['choix']
-        sondage_octobattle.save()
+    sondage_octobattle.reponse_minsanity = request.POST["reponse_minsanity"]
+    sondage_octobattle.reponse_cosminautes = request.POST["reponse_cosminautes"]
+    sondage_octobattle.save()
     return HttpResponseRedirect('/associations/bde/sondages_octobattle')
