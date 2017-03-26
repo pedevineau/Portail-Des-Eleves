@@ -204,7 +204,8 @@ def sondages_octobattle(request):
     sondage_octobattle = SondageOctoBattle.objects.filter(Q(reponse_minsanity=0) | Q(reponse_cosminautes=0)).order_by('id').first()
     points_minsanity = SondageOctoBattle.objects.exclude(reponse_cosminautes=0).filter(reponse_minsanity=F('sondage__resultat')).count()
     points_cosminautes = SondageOctoBattle.objects.exclude(reponse_minsanity=0).filter(reponse_cosminautes=F('sondage__resultat')).count()
-    return render(request, 'bde/sondages_octobattle.html', {'sondage_octobattle':sondage_octobattle, 'points_minsanity':points_minsanity, 'points_cosminautes':points_cosminautes})
+    nombre_sondages_octobattle = SondageOctoBattle.objects.all().count()
+    return render(request, 'bde/sondages_octobattle.html', {'sondage_octobattle':sondage_octobattle, 'points_minsanity':points_minsanity, 'points_cosminautes':points_cosminautes, 'nombre_sondages_octobattle': nombre_sondages_octobattle})
 
 @permission_required('bde.add_sondageoctobattle')
 @login_required

@@ -12,6 +12,10 @@
 			align-items: flex-end;
 			margin-top: 50px;
 		}
+		#conteneur_sondages_octobattle
+		{
+			align-self: center;
+		}
 		/*#conteneur_jeu_octobattle div
 		{
 			margin: auto;
@@ -34,15 +38,16 @@
 		{
 			margin: 35px 0px 35px 0px;
 		}
-		#resultat_sondages_octobattle
+		#resultat_sondages_octobattle, .gros_chiffre
 		{
 			font-size: 50px;
+			margin-top: 20px;
 		}
-		#victoire_minsanity
+		#victoire_minsanity, #chiffre_minsanity
 		{
 			color: #ff33cc;
 		}
-		#victoire_cosminautes
+		#victoire_cosminautes, #chiffre_cosminautes
 		{
 			color: black;
 		}
@@ -54,10 +59,35 @@
 		{
 			color: red;
 		}
+
+		.score
+		{
+			height: 500px;
+			width: 100px;
+			margin-bottom: 20px;
+			display: flex;
+			flex-direction: column-reverse;
+		}
+		#score_minsanity
+		{
+			background-color: #ff33cc;
+		}
+		#score_cosminautes
+		{
+			background-color: black;
+		}
 	</style>
 	<script type="text/javascript" src="{% static "jquery-1.7.2.min.js" %}" ></script>
 	<script type="text/javascript">
 		$(function(){
+			//Gère les barres de progression
+			var hauteurMax = 500;
+			var hauteurMinsanity = Math.round(hauteurMax * {{ points_minsanity }} / {{ nombre_sondages_octobattle }});
+			var hauteurCosminautes = Math.round(hauteurMax * {{ points_cosminautes }} / {{ nombre_sondages_octobattle }});
+			$('.score').css('height', hauteurMax + 'px');
+			$('#score_minsanity').css('height', hauteurMinsanity + 'px');
+			$('#score_cosminautes').css('height', hauteurCosminautes + 'px');
+
 			//Valide les formulaires quand on appuie sur certaines touches
 			$(document).keypress(function(event){
 				var keycode = (event.keycode ? event.keycode : event.which);
@@ -97,7 +127,7 @@
 				//$('#form_sondage_octobattle').delay(10000).submit();
 				setTimeout(function(){
 					form.submit();
-				}, 3000);
+				}, 2000);
 			});
 
 			// Colore les messages de victoire
@@ -149,7 +179,15 @@
 {% block content %}
 	<div id="conteneur_jeu_octobattle">
 		<div>
-			<p>Minsa : {{ points_minsanity }}</p>
+			<div class="score">
+				<div id="score_minsanity"></div>
+			</div>
+			<div class="conteneur_logo">
+				<img src="{% static "logo_minsanity.png" %}" class="logo_sondage"/>
+			</div>
+			<div id="chiffre_minsanity" class="gros_chiffre">
+				<p>{{ points_minsanity }}</p>
+			</div>
 		</div>
 		<div id="conteneur_sondages_octobattle">
 			{% if sondage_octobattle %}
@@ -191,7 +229,15 @@
 			{% endif %}
 		</div>
 		<div>
-			<p>Cosmi : {{ points_cosminautes }}</p>
+			<div class="score">
+				<div id="score_cosminautes"></div>
+			</div>
+			<div class="conteneur_logo">
+				<img src="{% static "logo_cosminautes.png" %}" class="logo_sondage"/>
+			</div>
+			<div id="chiffre_cosminautes" class="gros_chiffre">
+				<p>{{ points_cosminautes }}</p>
+			</div>
 		</div>
 	</div>
 {% endblock %}
