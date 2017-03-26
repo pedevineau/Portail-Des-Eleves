@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+	<link rel="stylesheet" href="{% static "association.css" %}" />
+	<style>
+		#conteneur_jeu_octobattle
+		{
+			display: flex;
+			justify-content: space-around;
+			text-align: center;
+			align-items: flex-end;
+			margin-top: 50px;
+		}
+		/*#conteneur_jeu_octobattle div
+		{
+			margin: auto;
+		}*/
+		.logo_sondage
+		{
+			height: 100px;
+			width: 100px;
+		}
+		.reponse_octobattle
+		{
+			display: flex;
+			justify-content: space-around;
+		}
+		.reponse_octobattle form
+		{
+			margin: auto;
+		}
+		.reponse_octobattle form button
+		{
+			margin: 35px 0px 35px 0px;
+		}
+		#resultat_sondages_octobattle
+		{
+			font-size: 50px;
+		}
+		#victoire_minsanity
+		{
+			color: #ff33cc;
+		}
+		#victoire_cosminautes
+		{
+			color: black;
+		}
+		.bleu
+		{
+			color: blue;
+		}
+		.rouge
+		{
+			color: red;
+		}
+	</style>
+	<script type="text/javascript" src="{% static "jquery-1.7.2.min.js" %}" ></script>
+	<script type="text/javascript">
+		$(function(){
+			//Valide les formulaires quand on appuie sur certaines touches
+			$(document).keypress(function(event){
+				var keycode = (event.keycode ? event.keycode : event.which);
+				// 97 : A, réponse 1 minsa
+				// 113: Q, réponse 2 minsa
+				// 112: P, réponse 1 cosmi
+				// 109: M, réponse 2 cosmi
+				console.log(keycode);
+				if(keycode == 97){
+					$('#votant_reponse_1').val("minsanity");
+					$('#form_reponse_1').submit();
+				}
+				else if(keycode == 113){
+					$('#votant_reponse_2').val("minsanity");
+					$('#form_reponse_2').submit();
+				}
+				else if(keycode == 112){
+					$('#votant_reponse_1').val("cosminautes");
+					$('#form_reponse_1').submit();
+				}
+				else if(keycode == 109){
+					$('#votant_reponse_2').val("cosminautes");
+					$('#form_reponse_2').submit();
+				}
+			});
+
+			// Colore les messages de victoire
+			$( "#victoire_minsanity" ).each(function( index ) {
+				var originalText = $( this ).text();
+				var newText = "";
+				for( var i = 0; i < originalText.length; i++){
+					if (i % 2 === 0)
+						newText += '<span class="bleu">' + originalText.charAt(i) + "</span>";  
+					else
+						newText += originalText.charAt(i);
+				}
+				$( this ).html(newText);
+			});
+			$( "#victoire_cosminautes" ).each(function( index ) {
+				var originalText = $( this ).text();
+				var newText = "";
+				for( var i = 0; i < originalText.length; i++){
+					if (i % 2 === 0)
+						newText += '<span class="rouge">' + originalText.charAt(i) + "</span>";  
+					else
+						newText += originalText.charAt(i);
+				}
+				$( this ).html(newText);
+			});
+		});
+	</script>
+{% endblock %}
+
+{% block onglets %}
+	<div id="menu_onglets">
+		<h1><img class="logo_assoce" src = "{% static "logo_bde.png" %}">BDE</h1>
+
+		<ul class="nav nav-pills">
+			<li><a href="/associations/bde/messages/"><img src="{% static "mail.png" %}"/><span>Messages</span></a></li>
+			<li><a href="/associations/bde/evenements/"><img src="{% static "date.png" %}"/><span>Évenements</span></a></li>
+			<li><a href="/associations/bde/equipe/"><img src="{% static "user.png" %}"/><span>Équipe</span></a></li>
+			<li><a href="/associations/bde/medias/"><img src="{% static "clapperboard.png" %}"/><span>Médias</span></a></li>
+			<li><a href="/associations/bde/voter/"><img src="{% static "page_voter.png" %}"/><span>Voter</span></a></li>
+			<li><a href="/associations/bde/palums/"><img src="{% static "page_palums.png" %}"/>Palums<span>
+			<li><a href="/associations/bde/offre_stage/"><img src="{% static "page_offre_stage.png" %}"/><span>Offres de Stage</span></a></li>
+			<li><a href="/associations/bde/voeux_parrainage/"><img src="{% static "page_voeux_parrainage.png" %}"/><span>Parrainage</span></a></li>
+			<li><a href="http://eleves.mines-paris.eu/static/Boite-a-outils-BDE.pdf"><img src="/static/page_site.png"><span>Boîte à outils</span></a></li>
+		</ul>
+		<hr />
+	</div>
+{% endblock %}
+
+{% block content %}
+	<div id="conteneur_jeu_octobattle">
+		<div>
+			<p>Minsa : {{ points_minsanity }}</p>
+		</div>
+		<div id="conteneur_sondages_octobattle">
+			{% if sondage_octobattle %}
+				<p id="sondage_octobattle_question">{{ sondage_octobattle.sondage.question }}</p>
+
+				<div id="reponse_1" class="reponse_octobattle">
+					<img src="{% static 'logo_minsanity.png' %}" class='logo_sondage' {% if sondage_octobattle.reponse_minsanity != 1 %}style="display:none"{% endif %}/>
+					<form method="post" action='/associations/bde/voter_sondages_octobattle/' class="voteform" id="form_reponse_1">
+						{% csrf_token %}
+						<input type="hidden" name="id_sondage_octobattle" value="{{ sondage_octobattle.id }}" />
+						<input type="hidden" name="votant" id="votant_reponse_1" value="nitro" />
+						<input type="hidden" name="choix" value="1" />
+						<input type="hidden" name="next" value="{{ request.path }}" />
+						<button class="btn" type="submit" id="octobattle_reponse_1">{{ sondage_octobattle.sondage.reponse1 }}</button>
+					</form>
+					<img src="{% static 'logo_cosminautes.png' %}" class='logo_sondage' {% if sondage_octobattle.reponse_cosminautes != 1 %}style="display:none"{% endif %}/>
+				</div>
+				<div id="reponse_2" class="reponse_octobattle"/>
+					<img src="{% static 'logo_minsanity.png' %}" class='logo_sondage' {% if sondage_octobattle.reponse_minsanity != 2 %}style="display:none"{% endif %}/>
+					<form method="post" action='/associations/bde/voter_sondages_octobattle/' class="voteform" id="form_reponse_2">
+						{% csrf_token %}
+						<input type="hidden" name="id_sondage_octobattle" value="{{ sondage_octobattle.id }}" />
+						<input type="hidden" name="votant" id="votant_reponse_2" value="nitro" />
+						<input type="hidden" name="choix" value="2" />
+						<input type="hidden" name="next" value="{{ request.path }}" />
+						<button class="btn" type="submit" id="octobattle_reponse_2">{{ sondage_octobattle.sondage.reponse2 }}</button>
+					</form>
+					<img src="{% static 'logo_cosminautes.png' %}" class='logo_sondage' {% if sondage_octobattle.reponse_cosminautes != 2 %}style="display:none"{% endif %}/>
+				</div>
+			{% else %}
+				<div id="resultat_sondages_octobattle">
+					{% if points_minsanity < points_cosminautes %}
+						<p id="victoire_cosminautes">VICTOIRE COSMINAUTES !</p>
+					{% elif points_cosminautes < points_minsanity %}
+						<p id="victoire_minsanity">VICTOIRE MINSANITY ! </p>
+					{% else %}
+						<p>ÉGALITÉ !</p>
+					{% endif %}
+				</div>
+			{% endif %}
+		</div>
+		<div>
+			<p>Cosmi : {{ points_cosminautes }}</p>
+		</div>
+	</div>
+{% endblock %}
