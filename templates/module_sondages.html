@@ -7,8 +7,8 @@
 
 <div id = "module_sondages" class="well well-small">
 	<p class = "well-header">Sondage du jour
-	<a href="/sondages/proposer/"><img class="pull-right" src="{% static "plus.png" %}" title="Proposer un sondage"></a>
-	<a href="/sondages/scores/"><img class="pull-right" src="{% static "statistics.png" %}" title="Statistiques des sondages"></a>
+		<a href="/sondages/proposer/"><img class="pull-right" src="{% static "plus.png" %}" title="Proposer un sondage"></a>
+		<a href="/sondages/scores/"><img class="pull-right" src="{% static "statistics.png" %}" title="Statistiques des sondages"></a>
 	</p>	
 	<hr>
 	{% load obtenir_sondage_du_jour %}
@@ -29,16 +29,16 @@
 			<p id="sondage_question">{{ sondage.question }}</p>
 			
 			<form method="post" action="/sondages/voter/" class="voteform" >
-			{% csrf_token %}
-			<input type="hidden" name="choix" value="1">
-			<input type="hidden" name="next" value="{{ request.path }}" />
-			<button class="btn" type="submit" id = "input_reponse_1">{{ sondage.reponse1 }}</button>
+				{% csrf_token %}
+				<input type="hidden" name="choix" value="1">
+				<input type="hidden" name="next" value="{{ request.path }}" />
+				<button class="btn" type="submit" id = "input_reponse_1">{{ sondage.reponse1 }}</button>
 			</form>	
 			<form method="post" action="/sondages/voter/" class="voteform">
-			{% csrf_token %}
-			<input type="hidden" name="choix" value="2">
-			<input type="hidden" name="next" value="{{ request.path }}" />
-			<button class="btn" type="submit" id = "input_reponse_2">{{ sondage.reponse2 }}</button>			
+				{% csrf_token %}
+				<input type="hidden" name="choix" value="2">
+				<input type="hidden" name="next" value="{{ request.path }}" />
+				<button class="btn" type="submit" id = "input_reponse_2">{{ sondage.reponse2 }}</button>			
 			</form>
 		{% endif %}
 	{% else %}

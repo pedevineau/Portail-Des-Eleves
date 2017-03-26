@@ -9,6 +9,8 @@ urlpatterns = [
     url(r'^voeux_parrainage/$', views.voeux_parrainage, name='voeux_parrainage'),
     url(r'^visualiser_voeux_parrainage/$', views.visualiser_voeux_parrainage, name='visualiser_voeux_parrainage'),
     url(r'^voeux_parrainage_export/$', views.voeux_parrainage_export, name='voeux_parrainage_export'),
-    url(r'^voeux_parrainage_algo_export/$', views.voeux_parrainage_algo_export, name='voeux_parrainage_algo_export')
+    url(r'^voeux_parrainage_algo_export/$', views.voeux_parrainage_algo_export, name='voeux_parrainage_algo_export'),
+    url(r'^sondages_octobattle/$', views.sondages_octobattle, name='sondages_octobattle'),
+    url(r'^voter_sondages_octobattle/$', views.voter_sondages_octobattle, name='voter_sondages_octobattle')
   ]
 

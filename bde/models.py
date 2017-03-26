@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from trombi.models import UserProfile
+from sondages.models import Sondage
 from datetime import date, datetime, timedelta
 from django.core.files import File
 import subprocess
@@ -104,3 +105,11 @@ class ParrainageVoeuxForm(ModelForm):
     class Meta:
         model = ParrainageVoeux
         exclude = ('parrain',)
+
+class SondageOctoBattle(models.Model):
+    sondage = models.ForeignKey(Sondage)
+    reponse_minsanity = models.IntegerField(editable=False)
+    reponse_cosminautes = models.IntegerField(editable=False)
+
+    def __str__(self):
+        return str(self.sondage)

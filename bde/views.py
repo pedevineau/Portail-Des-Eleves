@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 from django.shortcuts import render, get_object_or_404, redirect
 from trombi.models import UserProfile
-from bde.models import Liste, Vote, Palum, ParrainageVoeux, ParrainageVoeuxForm
+from bde.models import Liste, Vote, Palum, ParrainageVoeux, ParrainageVoeuxForm, SondageOctoBattle
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib import messages
 from django.template import RequestContext
@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.conf import settings
 import json
 from datetime import date, datetime, timedelta
+from django.db.models import F, Q
 
 import datetime
 
@@ -196,3 +197,23 @@ def voeux_parrainage_algo_export(request):
                 ligne.append(15) 
         writer.writerow(ligne)
     return response
+
+@permission_required('bde.add_sondageoctobattle')
+@login_required
+def sondages_octobattle(request):
+    sondage_octobattle = SondageOctoBattle.objects.filter(Q(reponse_minsanity=0) | Q(reponse_cosminautes=0)).order_by('id').first()
+    points_minsanity = SondageOctoBattle.objects.exclude(reponse_cosminautes=0).filter(reponse_minsanity=F('sondage__resultat')).count()
+    points_cosminautes = SondageOctoBattle.objects.exclude(reponse_minsanity=0).filter(reponse_cosminautes=F('sondage__resultat')).count()
+    return render(request, 'bde/sondages_octobattle.html', {'sondage_octobattle':sondage_octobattle, 'points_minsanity':points_minsanity, 'points_cosminautes':points_cosminautes})
+
+@permission_required('bde.add_sondageoctobattle')
+@login_required
+def voter_sondages_octobattle(request):
+    sondage_octobattle = SondageOctoBattle.objects.filter(id=int(request.POST['id_sondage_octobattle'])).first()
+    if request.POST['votant'] == 'minsanity':
+        sondage_octobattle.reponse_minsanity = request.POST['choix']
+        sondage_octobattle.save()
+    elif request.POST['votant'] == 'cosminautes':
+        sondage_octobattle.reponse_cosminautes = request.POST['choix']
+        sondage_octobattle.save()
+    return HttpResponseRedirect('/associations/bde/sondages_octobattle')
